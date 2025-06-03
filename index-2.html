@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Banner Creator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .banner {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      color: #fff;
+      text-align: center;
+    }
+    #downloadBtn, #saveBannerBtn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Create a Custom Banner</h2>
+    <label for="headline">Headline:</label>
+    <input type="text" id="headline" placeholder="e.g., Get the Best Mobile Deals!">
+
+    <label for="subtext">Subtext:</label>
+    <textarea id="subtext" rows="3" placeholder="e.g., Explore top brands with No Cost EMI."></textarea>
+
+    <label for="bgColor">Background Color:</label>
+    <input type="color" id="bgColor" value="#007bff">
+
+    <label for="textColor">Text Color:</label>
+    <input type="color" id="textColor" value="#ffffff">
+
+    <label for="fontFamily">Font Family:</label>
+    <select id="fontFamily">
+      <option value="Arial">Arial</option>
+      <option value="Verdana">Verdana</option>
+      <option value="Georgia">Georgia</option>
+      <option value="Courier New">Courier New</option>
+      <option value="Times New Roman">Times New Roman</option>
+    </select>
+
+    <label for="bannerImage">Upload Image:</label>
+    <input type="file" id="bannerImage" accept="image/*">
+
+    <label for="imageType">Download Image As:</label>
+    <select id="imageType">
+      <option value="png">PNG</option>
+      <option value="jpeg">JPEG</option>
+      <option value="webp">WEBP</option>
+    </select>
+
+    <button id="downloadBtn" onclick="generateBanner()">Generate Banner</button>
+    <button id="saveBannerBtn" onclick="downloadBanner()">Download Banner</button>
+
+    <div id="bannerPreview" class="banner" style="display:none;"></div>
+  </div>
+
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script>
+    function generateBanner() {
+      const headline = document.getElementById('headline').value;
+      const subtext = document.getElementById('subtext').value;
+      const bgColor = document.getElementById('bgColor').value;
+      const textColor = document.getElementById('textColor').value;
+      const fontFamily = document.getElementById('fontFamily').value;
+      const imageInput = document.getElementById('bannerImage');
+
+      const banner = document.getElementById('bannerPreview');
+      banner.style.backgroundColor = bgColor;
+      banner.style.color = textColor;
+      banner.style.fontFamily = fontFamily;
+
+      let bannerHTML = `<h2>${headline}</h2><p>${subtext}</p>`;
+
+      if (imageInput.files && imageInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          banner.innerHTML = bannerHTML + `<img src="${e.target.result}" alt="Banner Image">`;
+          banner.style.display = 'block';
+        };
+        reader.readAsDataURL(imageInput.files[0]);
+      } else {
+        banner.innerHTML = bannerHTML;
+        banner.style.display = 'block';
+      }
+    }
+
+    function downloadBanner() {
+      const banner = document.getElementById('bannerPreview');
+      const format = document.getElementById('imageType').value;
+      html2canvas(banner).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `custom-banner.${format}`;
+        link.href = canvas.toDataURL(`image/${format}`);
+        link.click();
+      });
+    }
+  </script>
+</body>
+</html>
